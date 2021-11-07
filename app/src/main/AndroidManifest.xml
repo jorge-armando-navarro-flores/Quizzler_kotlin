@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Quizzler_kotlin">
-        <activity android:name=".Quizzler"></activity>
+        <activity android:name=".QuizzlerActivity"></activity>
         <activity android:name=".MainActivity"
             android:exported="true"
             >
