@@ -8,16 +8,16 @@ import java.net.HttpURLConnection
 import java.net.MalformedURLException
 import java.net.URL
 
-class QuestionsCoroutine {
+class QuestionCoroutine {
     public suspend fun getQuestionsData(): JSONArray? {
         val response = StringBuffer()
-        try{
+        try {
             val url = URL("https://opentdb.com/api.php?amount=10&category=18&type=boolean")
             val httpConnection = url.openConnection() as HttpURLConnection
             val inputStream: InputStream = BufferedInputStream(httpConnection.inputStream)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-            var line: String = ""
-            while(bufferedReader.readLine().also { line = it } != null) {
+            var line: String? = ""
+            while (bufferedReader.readLine().also { line = it } != null) {
                 response.append(line)
             }
         } catch (e: MalformedURLException) {
@@ -27,13 +27,11 @@ class QuestionsCoroutine {
         }
         val content = response.toString()
         try {
-            val data = JSONObject(content)
-            return data.getJSONArray("results")
+            val jsonTodo = JSONObject(content)
+            return jsonTodo.getJSONArray("results")
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-
         return null
-
     }
 }
