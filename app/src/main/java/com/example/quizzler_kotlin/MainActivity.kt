@@ -1,9 +1,13 @@
 package com.example.quizzler_kotlin
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
+import android.graphics.drawable.ColorDrawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,14 +22,52 @@ class MainActivity : AppCompatActivity() {
             val intent: Intent = Intent(this, QuizzlerActivity::class.java)
             startActivity(intent)
         }
-        var categories = arrayListOf<String>("Python", "Java", "C++")
-        adapter = ArrayAdapter(applicationContext, android.R.layout.simple_spinner_dropdown_item, categories)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        val context = this
+
+        // list of spinner items
+        val list = mutableListOf(
+            "Python",
+            "Java",
+            "C++"
+        )
         spinner = findViewById(R.id.categorySpinner)
+        // initialize an array adapter for spinner
+        val adapter:ArrayAdapter<String> = object: ArrayAdapter<String>(
+            context,
+            android.R.layout.simple_spinner_dropdown_item,
+            list
+        ){
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+                val view:TextView = super.getDropDownView(
+                    position,
+                    convertView,
+                    parent
+                ) as TextView
+                // set item text bold and monospace font
+                view.setTypeface(Typeface.MONOSPACE, Typeface.BOLD)
+
+                // spinner item text color
+                view.setTextColor(Color.parseColor("#0018A8"))
+
+                // set selected item style
+                if (position == spinner.selectedItemPosition){
+                    view.background = ColorDrawable(Color.parseColor("#F0F8FF"))
+                }
+
+                return view
+            }
+        }
+
+        // finally, data bind spinner with adapter
         spinner.adapter = adapter
-        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+
+        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                Toast.makeText(applicationContext, "You selected " + adapter.getItem(position),Toast.LENGTH_SHORT).show()
+                Toast.makeText(applicationContext,"You selected " + adapter.getItem(position), Toast.LENGTH_SHORT).show()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -33,6 +75,7 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
     }
 
 
