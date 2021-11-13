@@ -1,5 +1,9 @@
 package com.example.quizzler_kotlin
 
+import android.text.Html
+import android.text.Spanned
+import android.util.Log
+
 class QuizBrain(qList : List<Question>) {
     var questionNumber : Int = 0
     var score : Int = 0
@@ -13,7 +17,7 @@ class QuizBrain(qList : List<Question>) {
     fun nextQuestion() : String{
         currentQuestion = questionList[questionNumber]
         questionNumber += 1
-        val qText : String = currentQuestion!!.text
+        val qText : Spanned? = Html.fromHtml(currentQuestion!!.text)
         return "Q.$questionNumber: $qText (True/False): "
     }
 
