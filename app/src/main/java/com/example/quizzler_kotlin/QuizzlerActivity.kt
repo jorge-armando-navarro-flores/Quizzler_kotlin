@@ -1,10 +1,12 @@
 package com.example.quizzler_kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -43,7 +45,7 @@ class QuizzlerActivity : AppCompatActivity() {
             questionTextView?.setText(qText)
         } else{
             questionTextView?.setText("You've reached the end of the quiz.")
-
+            saveScore(quiz!!.score)
         }
 
     }
@@ -72,10 +74,36 @@ class QuizzlerActivity : AppCompatActivity() {
         Timer().schedule(2000) {
             runOnUiThread {
                 getNextQuestion()
+
             }
         }
 
     }
+
+    fun saveScore(score:Int) {
+//        val nombreDelContactoEditText = findViewById<EditText>(R.id.nombreDelContacto)
+//        val nombreDelContacto = nombreDelContactoEditText.text.toString()
+//
+//        val telefonoDelContactoEditText = findViewById<EditText>(R.id.nombreDelContacto)
+//        val telefonoDelContacto = telefonoDelContactoEditText.text.toString()
+
+        val database = FirebaseDatabase.getInstance("https://quizzler-kotlin-default-rtdb.firebaseio.com/")
+        val myRef = database.getReference("Students")
+
+        var student: Student = Student()
+        student.name = "jorge"
+        student.score = score
+
+        myRef.child(student.name).setValue(student)
+
+
+    }
+
+//    fun abrirListaDeContactos(view: View) {
+//        var intent: Intent = Intent(applicationContext, ContactosActivity::class.java)
+//        startActivity(intent)
+//
+//    }
 
     fun getQuestionData(view: View?, categoryId: String): List<Question> {
         val questionCoroutine = QuestionCoroutine()
