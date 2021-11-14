@@ -9,10 +9,10 @@ import java.net.MalformedURLException
 import java.net.URL
 
 class QuestionCoroutine {
-    public suspend fun getQuestionsData(): JSONArray? {
+    public suspend fun getData(request: String, field: String): JSONArray? {
         val response = StringBuffer()
         try {
-            val url = URL("https://opentdb.com/api.php?amount=10&category=18&type=boolean")
+            val url = URL(request)
             val httpConnection = url.openConnection() as HttpURLConnection
             val inputStream: InputStream = BufferedInputStream(httpConnection.inputStream)
             val bufferedReader = BufferedReader(InputStreamReader(inputStream))
@@ -28,7 +28,7 @@ class QuestionCoroutine {
         val content = response.toString()
         try {
             val jsonTodo = JSONObject(content)
-            return jsonTodo.getJSONArray("results")
+            return jsonTodo.getJSONArray(field)
         } catch (e: JSONException) {
             e.printStackTrace()
         }

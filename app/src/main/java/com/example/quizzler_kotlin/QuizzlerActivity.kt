@@ -3,6 +3,7 @@ package com.example.quizzler_kotlin
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,7 +22,11 @@ class QuizzlerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quizzler)
-        questionBank = getData(null)
+        var bundle :Bundle ?=intent.extras
+        var message = bundle!!.getString("categoryId") // 1
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+
+        questionBank = message?.let { getQuestionData(null, it) }
         quiz = QuizBrain(questionBank!!)
         scoreTextView = findViewById(R.id.scoreLabel)
         questionTextView = findViewById<TextView>(R.id.questionArea)
@@ -72,12 +77,12 @@ class QuizzlerActivity : AppCompatActivity() {
 
     }
 
-    fun getData(view: View?): List<Question> {
+    fun getQuestionData(view: View?, categoryId: String): List<Question> {
         val questionCoroutine = QuestionCoroutine()
         var questionData: JSONArray? = null
         try {
             var job = GlobalScope.launch{
-                questionData =  questionCoroutine.getQuestionsData()
+                questionData =  questionCoroutine.getData("https://opentdb.com/api.php?amount=10&category=$categoryId&type=boolean", "results")
             }
             runBlocking {
                 job.join()
