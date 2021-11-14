@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         // list of spinner items
 
-
+        var nickname: EditText = findViewById(R.id.nicknameEditText)
         spinner = findViewById(R.id.categorySpinner)
         // initialize an array adapter for spinner
         val adapter:ArrayAdapter<String> = object: ArrayAdapter<String>(
@@ -84,6 +84,7 @@ class MainActivity : AppCompatActivity() {
         val startButton : Button = findViewById(R.id.startButton)
         startButton.setOnClickListener {
             val intent: Intent = Intent(this, QuizzlerActivity::class.java)
+            intent.putExtra("nickname", nickname.text.toString())
             intent.putExtra("categoryId", categoryId)
             startActivity(intent)
         }

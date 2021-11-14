@@ -1,6 +1,5 @@
 package com.example.quizzler_kotlin
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -20,15 +19,21 @@ class QuizzlerActivity : AppCompatActivity() {
     var quiz: QuizBrain? = null
     var questionTextView: TextView? = null
     var scoreTextView: TextView? = null
+    var student: Student? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quizzler)
         var bundle :Bundle ?=intent.extras
-        var message = bundle!!.getString("categoryId") // 1
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        student = Student()
+        var nick = bundle!!.getString("nickname")
+        if (nick != null) {
+            student!!.name = nick
+        }
+        var categoryId = bundle!!.getString("categoryId") // 1
+        Toast.makeText(this, categoryId, Toast.LENGTH_SHORT).show()
 
-        questionBank = message?.let { getQuestionData(null, it) }
+        questionBank = categoryId?.let { getQuestionData(null, it) }
         quiz = QuizBrain(questionBank!!)
         scoreTextView = findViewById(R.id.scoreLabel)
         questionTextView = findViewById<TextView>(R.id.questionArea)
@@ -45,7 +50,8 @@ class QuizzlerActivity : AppCompatActivity() {
             questionTextView?.setText(qText)
         } else{
             questionTextView?.setText("You've reached the end of the quiz.")
-            saveScore(quiz!!.score)
+            student?.score = quiz!!.score
+            saveScore()
         }
 
     }
@@ -80,7 +86,7 @@ class QuizzlerActivity : AppCompatActivity() {
 
     }
 
-    fun saveScore(score:Int) {
+    fun saveScore() {
 //        val nombreDelContactoEditText = findViewById<EditText>(R.id.nombreDelContacto)
 //        val nombreDelContacto = nombreDelContactoEditText.text.toString()
 //
@@ -90,11 +96,7 @@ class QuizzlerActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance("https://quizzler-kotlin-default-rtdb.firebaseio.com/")
         val myRef = database.getReference("Students")
 
-        var student: Student = Student()
-        student.name = "jorge"
-        student.score = score
-
-        myRef.child(student.name).setValue(student)
+        myRef.child(student!!.name).setValue(student)
 
 
     }
