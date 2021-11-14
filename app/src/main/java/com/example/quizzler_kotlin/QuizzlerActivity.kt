@@ -1,5 +1,6 @@
 package com.example.quizzler_kotlin
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -52,6 +53,7 @@ class QuizzlerActivity : AppCompatActivity() {
             questionTextView?.setText("You've reached the end of the quiz.")
             student?.score = quiz!!.score
             saveScore()
+            openRanking()
         }
 
     }
@@ -101,11 +103,11 @@ class QuizzlerActivity : AppCompatActivity() {
 
     }
 
-//    fun abrirListaDeContactos(view: View) {
-//        var intent: Intent = Intent(applicationContext, ContactosActivity::class.java)
-//        startActivity(intent)
-//
-//    }
+    fun openRanking() {
+        var intent: Intent = Intent(applicationContext, RankingActivity::class.java)
+        startActivity(intent)
+
+    }
 
     fun getQuestionData(view: View?, categoryId: String): List<Question> {
         val questionCoroutine = QuestionCoroutine()
