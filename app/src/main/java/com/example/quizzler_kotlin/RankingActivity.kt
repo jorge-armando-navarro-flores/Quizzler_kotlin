@@ -17,6 +17,8 @@ class RankingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ranking)
 
+
+
         val database = FirebaseDatabase.getInstance("https://quizzler-kotlin-default-rtdb.firebaseio.com/")
         val myRef = database.getReference("Students")
 

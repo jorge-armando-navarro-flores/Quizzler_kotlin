@@ -2,10 +2,15 @@ package com.example.quizzler_kotlin
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.RecognitionListener
+import android.speech.RecognizerIntent
+import android.speech.SpeechRecognizer
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,12 +26,15 @@ class QuizzlerActivity : AppCompatActivity() {
     var questionTextView: TextView? = null
     var scoreTextView: TextView? = null
     var student: Student? = null
+    private var tts: TextToSpeechImplementation? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quizzler)
         var bundle :Bundle ?=intent.extras
         student = Student()
+        tts = TextToSpeechImplementation(this)
         var nick = bundle!!.getString("nickname")
         if (nick != null) {
             student!!.name = nick
@@ -41,7 +49,17 @@ class QuizzlerActivity : AppCompatActivity() {
         getNextQuestion()
 //        Log.d("CREATIOOOOOOOOOOOON", questionBank!![0].text)
         questionTextView = findViewById<View>(R.id.questionArea) as TextView
+
+
     }
+
+    public override fun onDestroy() {
+        super.onDestroy()
+        tts!!.release()
+
+    }
+
+
 
     fun getNextQuestion(){
         questionTextView?.setBackgroundColor(resources.getColor(R.color.white))
@@ -70,9 +88,12 @@ class QuizzlerActivity : AppCompatActivity() {
 
     fun giveFeedback(isRight: Boolean){
         if(isRight){
+            tts!!.newMessage("Well done")
+
             questionTextView?.text = "Right"
             questionTextView?.setBackgroundColor(resources.getColor(R.color.right))
         } else{
+            tts!!.newMessage("Sorry, you are wrong")
             questionTextView?.text = "Wrong"
             questionTextView?.setBackgroundColor(resources.getColor(R.color.wrong))
         }
@@ -99,7 +120,6 @@ class QuizzlerActivity : AppCompatActivity() {
         val myRef = database.getReference("Students")
 
         myRef.child(student!!.name).setValue(student)
-
 
     }
 
