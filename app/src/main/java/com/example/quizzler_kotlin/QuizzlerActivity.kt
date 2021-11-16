@@ -7,6 +7,7 @@ import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,8 @@ class QuizzlerActivity : AppCompatActivity() {
     var questionTextView: TextView? = null
     var scoreTextView: TextView? = null
     var student: Student? = null
+    var trueButton: ImageButton? = null
+    var falseButton: ImageButton? = null
     private var tts: TextToSpeechImplementation? = null
 
 
@@ -35,6 +38,8 @@ class QuizzlerActivity : AppCompatActivity() {
         var bundle :Bundle ?=intent.extras
         student = Student()
         tts = TextToSpeechImplementation(this)
+        trueButton = findViewById(R.id.trueButton)
+        falseButton = findViewById(R.id.falseButton)
         var nick = bundle!!.getString("nickname")
         if (nick != null) {
             student!!.name = nick
@@ -62,6 +67,8 @@ class QuizzlerActivity : AppCompatActivity() {
 
 
     fun getNextQuestion(){
+        trueButton?.setEnabled(true)
+        falseButton?.setEnabled(true)
         questionTextView?.setBackgroundColor(resources.getColor(R.color.white))
         scoreTextView?.setText("Score: ${quiz!!.score}")
         if(quiz?.stillHasQuestions() == true){
@@ -87,6 +94,8 @@ class QuizzlerActivity : AppCompatActivity() {
     }
 
     fun giveFeedback(isRight: Boolean){
+        trueButton?.setEnabled(false)
+        falseButton?.setEnabled(false)
         if(isRight){
             tts!!.newMessage("Well done")
 

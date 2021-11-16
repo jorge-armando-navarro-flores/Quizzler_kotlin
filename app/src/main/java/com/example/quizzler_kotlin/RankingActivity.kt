@@ -1,16 +1,19 @@
 package com.example.quizzler_kotlin
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
+
 
 class RankingActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -77,4 +80,11 @@ class RankingActivity : AppCompatActivity() {
 
 
     }
+
+    override fun onBackPressed() {
+        Log.d("CDA", "onBackPressed Called")
+        val intent: Intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
 }
