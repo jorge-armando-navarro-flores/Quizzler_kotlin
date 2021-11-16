@@ -2,6 +2,7 @@ package com.example.quizzler_kotlin
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
@@ -29,17 +30,22 @@ class QuizzlerActivity : AppCompatActivity() {
     var student: Student? = null
     var trueButton: ImageButton? = null
     var falseButton: ImageButton? = null
+    var counter: Int = 10
+    var timer: CountDownTimer? =null
+    var counterTextView: TextView? = null
     private var tts: TextToSpeechImplementation? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quizzler)
+
         var bundle :Bundle ?=intent.extras
         student = Student()
         tts = TextToSpeechImplementation(this)
         trueButton = findViewById(R.id.trueButton)
         falseButton = findViewById(R.id.falseButton)
+        counterTextView = findViewById(R.id.counterTextView)
         var nick = bundle!!.getString("nickname")
         if (nick != null) {
             student!!.name = nick
@@ -64,6 +70,25 @@ class QuizzlerActivity : AppCompatActivity() {
 
     }
 
+    fun startCounter(){
+        if(timer != null){
+            timer?.cancel()
+        }
+        counter = 9
+        timer = object: CountDownTimer(11000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                counterTextView?.text = counter.toString()
+                Log.d("COUNTERRRRRRR", "$counter")
+                counter -= 1
+            }
+
+            override fun onFinish() {
+                giveFeedback(false, true)
+            }
+        }
+        (timer as CountDownTimer).start()
+    }
+
 
 
     fun getNextQuestion(){
@@ -74,6 +99,7 @@ class QuizzlerActivity : AppCompatActivity() {
         if(quiz?.stillHasQuestions() == true){
             val qText = quiz?.nextQuestion()
             questionTextView?.setText(qText)
+            startCounter()
         } else{
             questionTextView?.setText("You've reached the end of the quiz.")
             student?.score = quiz!!.score
@@ -85,27 +111,37 @@ class QuizzlerActivity : AppCompatActivity() {
 
     fun truePressed(view: View?){
         val isRight: Boolean = quiz?.checkAnswer("True") == true
-        giveFeedback(isRight)
+        giveFeedback(isRight, false)
     }
 
     fun falsePressed(view: View?){
         val isRight: Boolean = quiz?.checkAnswer("False") == true
-        giveFeedback(isRight)
+        giveFeedback(isRight, false)
     }
 
-    fun giveFeedback(isRight: Boolean){
+    fun giveFeedback(isRight: Boolean, timeUp: Boolean){
+        if(timer != null){
+            timer?.cancel()
+        }
         trueButton?.setEnabled(false)
         falseButton?.setEnabled(false)
-        if(isRight){
-            tts!!.newMessage("Well done")
-
-            questionTextView?.text = "Right"
-            questionTextView?.setBackgroundColor(resources.getColor(R.color.right))
-        } else{
-            tts!!.newMessage("Sorry, you are wrong")
-            questionTextView?.text = "Wrong"
+        if(timeUp){
+            tts!!.newMessage("Sorry, Time up")
+            questionTextView?.text = "Time up"
             questionTextView?.setBackgroundColor(resources.getColor(R.color.wrong))
+        }else{
+            if(isRight){
+                tts!!.newMessage("Well done")
+
+                questionTextView?.text = "Right"
+                questionTextView?.setBackgroundColor(resources.getColor(R.color.right))
+            } else{
+                tts!!.newMessage("Sorry, you are wrong")
+                questionTextView?.text = "Wrong"
+                questionTextView?.setBackgroundColor(resources.getColor(R.color.wrong))
+            }
         }
+
 
 
 
