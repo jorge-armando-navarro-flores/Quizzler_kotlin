@@ -65,7 +65,7 @@ class RankingActivity : AppCompatActivity() {
                 val nodes = dataSnapshot.children.toList()
                 nodes.asReversed().forEach {
                     var student: Student? = it.getValue(Student::class.java)
-                    Toast.makeText(applicationContext, student?.name , Toast.LENGTH_LONG).show()
+//                    Toast.makeText(applicationContext, student?.name , Toast.LENGTH_LONG).show()
 //                    valores.add(contacto?.nombre + " : " + contacto?.telefono)
                     adapter.add(student?.name + " : " + student?.score)
                 }

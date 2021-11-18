@@ -1,5 +1,6 @@
 package com.example.quizzler_kotlin
 
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -13,7 +14,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -104,7 +108,7 @@ class QuizzlerActivity : AppCompatActivity() {
             questionTextView?.setText("You've reached the end of the quiz.")
             student?.score = quiz!!.score
             saveScore()
-            openRanking()
+
         }
 
     }
@@ -164,9 +168,31 @@ class QuizzlerActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance("https://quizzler-kotlin-default-rtdb.firebaseio.com/")
         val myRef = database.getReference("Students")
 
-        myRef.child(student!!.name).setValue(student)
+        myRef.child(student!!.name).child("score").addValueEventListener(object: ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                val value = snapshot.getValue<Int>()
+                Toast.makeText(applicationContext, value.toString(), Toast.LENGTH_SHORT).show()
+                Log.d("SCOREEEEEEEEE", "Value is: " + value)
+                if(student!!.score > value!!){
+                    myRef.child(student!!.name).setValue(student)
+                }
+                openRanking()
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "Failed to read value.", error.toException())
+            }
+
+        })
+
+
+
 
     }
+
 
     fun openRanking() {
         var intent: Intent = Intent(applicationContext, RankingActivity::class.java)
