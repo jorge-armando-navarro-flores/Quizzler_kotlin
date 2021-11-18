@@ -37,8 +37,8 @@ class QuizzlerActivity : AppCompatActivity() {
     var counter: Int = 10
     var timer: CountDownTimer? =null
     var counterTextView: TextView? = null
+    var nickTextView: TextView? = null
     private var tts: TextToSpeechImplementation? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,34 +50,32 @@ class QuizzlerActivity : AppCompatActivity() {
         trueButton = findViewById(R.id.trueButton)
         falseButton = findViewById(R.id.falseButton)
         counterTextView = findViewById(R.id.counterTextView)
+        nickTextView = findViewById(R.id.nickTextView)
         var nick = bundle!!.getString("nickname")
         if (nick != null) {
             student!!.name = nick
+            nickTextView!!.text = nick
         }
         var categoryId = bundle!!.getString("categoryId") // 1
-        Toast.makeText(this, categoryId, Toast.LENGTH_SHORT).show()
-
+//        Toast.makeText(this, categoryId, Toast.LENGTH_SHORT).show()
         questionBank = categoryId?.let { getQuestionData(null, it) }
         quiz = QuizBrain(questionBank!!)
         scoreTextView = findViewById(R.id.scoreLabel)
-        questionTextView = findViewById<TextView>(R.id.questionArea)
+        questionTextView = findViewById(R.id.questionArea)
         getNextQuestion()
-//        Log.d("CREATIOOOOOOOOOOOON", questionBank!![0].text)
         questionTextView = findViewById<View>(R.id.questionArea) as TextView
-
-
     }
 
     public override fun onDestroy() {
         super.onDestroy()
         tts!!.release()
-
     }
 
     fun startCounter(){
         if(timer != null){
             timer?.cancel()
         }
+
         counter = 9
         timer = object: CountDownTimer(11000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
@@ -85,7 +83,6 @@ class QuizzlerActivity : AppCompatActivity() {
                 Log.d("COUNTERRRRRRR", "$counter")
                 counter -= 1
             }
-
             override fun onFinish() {
                 giveFeedback(false, true)
             }
@@ -93,13 +90,12 @@ class QuizzlerActivity : AppCompatActivity() {
         (timer as CountDownTimer).start()
     }
 
-
-
     fun getNextQuestion(){
         trueButton?.setEnabled(true)
         falseButton?.setEnabled(true)
         questionTextView?.setBackgroundColor(resources.getColor(R.color.white))
         scoreTextView?.setText("Score: ${quiz!!.score}")
+
         if(quiz?.stillHasQuestions() == true){
             val qText = quiz?.nextQuestion()
             questionTextView?.setText(qText)
@@ -108,9 +104,7 @@ class QuizzlerActivity : AppCompatActivity() {
             questionTextView?.setText("You've reached the end of the quiz.")
             student?.score = quiz!!.score
             saveScore()
-
         }
-
     }
 
     fun truePressed(view: View?){
@@ -146,25 +140,15 @@ class QuizzlerActivity : AppCompatActivity() {
             }
         }
 
-
-
-
         Timer().schedule(2000) {
             runOnUiThread {
                 getNextQuestion()
-
             }
         }
-
     }
 
     fun saveScore() {
-//        val nombreDelContactoEditText = findViewById<EditText>(R.id.nombreDelContacto)
-//        val nombreDelContacto = nombreDelContactoEditText.text.toString()
 //
-//        val telefonoDelContactoEditText = findViewById<EditText>(R.id.nombreDelContacto)
-//        val telefonoDelContacto = telefonoDelContactoEditText.text.toString()
-
         val database = FirebaseDatabase.getInstance("https://quizzler-kotlin-default-rtdb.firebaseio.com/")
         val myRef = database.getReference("Students")
 
@@ -174,8 +158,8 @@ class QuizzlerActivity : AppCompatActivity() {
                 // This method is called once with the initial value and again
                 // whenever data at this location is updated.
                 val value = snapshot.getValue<Int>()
-                Toast.makeText(applicationContext, value.toString(), Toast.LENGTH_SHORT).show()
-                Log.d("SCOREEEEEEEEE", "Value is: " + value)
+//                Toast.makeText(applicationContext, value.toString(), Toast.LENGTH_SHORT).show()
+//                Log.d("SCOREEEEEEEEE", "Value is: " + value)
                 if(student!!.score > value!!){
                     myRef.child(student!!.name).setValue(student)
                 }
@@ -185,14 +169,8 @@ class QuizzlerActivity : AppCompatActivity() {
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "Failed to read value.", error.toException())
             }
-
         })
-
-
-
-
     }
-
 
     fun openRanking() {
         var intent: Intent = Intent(applicationContext, RankingActivity::class.java)
