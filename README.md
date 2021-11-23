@@ -1,7 +1,7 @@
 # Academic Quizzler
 questionnaire that helps students to study about different fields
 ## Project
-[project](https://docs.google.com/document/d/1QOOYSs9W4rSmb_mX-w1QHwVx1KkPj3hRIkNxoBcLXVA/edit?usp=sharing)
+[Academic quizzler sustainable project](https://docs.google.com/document/d/1QOOYSs9W4rSmb_mX-w1QHwVx1KkPj3hRIkNxoBcLXVA/edit?usp=sharing)
 ## Usage
 ### Write your nickname
 ![nickname](screenshots/nickname.png)
