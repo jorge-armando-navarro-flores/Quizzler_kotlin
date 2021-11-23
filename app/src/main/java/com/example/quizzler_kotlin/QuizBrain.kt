@@ -2,7 +2,7 @@ package com.example.quizzler_kotlin
 
 import android.text.Html
 import android.text.Spanned
-import android.util.Log
+import com.example.quizzler_kotlin.models.Question
 
 class QuizBrain(qList : List<Question>) {
     var questionNumber : Int = 0

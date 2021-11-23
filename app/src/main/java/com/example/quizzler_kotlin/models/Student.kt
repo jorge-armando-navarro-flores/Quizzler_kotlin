@@ -1,4 +1,4 @@
-package com.example.quizzler_kotlin
+package com.example.quizzler_kotlin.models
 
 class Student {
     var name: String = ""

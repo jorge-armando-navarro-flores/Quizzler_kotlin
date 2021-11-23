@@ -1,4 +1,4 @@
-package com.example.quizzler_kotlin
+package com.example.quizzler_kotlin.models
 
 class Category(cName: String, cId: String) {
     val name : String = cName
